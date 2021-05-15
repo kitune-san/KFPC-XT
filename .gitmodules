@@ -1,0 +1,3 @@
+[submodule "HDL/KF8253"]
+	path = HDL/KF8253
+	url = git@github.com:kitune-san/KF8253.git
