@@ -13,3 +13,6 @@
 [submodule "HDL/KFPS2KB"]
 	path = HDL/KFPS2KB
 	url = git@github.com:kitune-san/KFPS2KB.git
+[submodule "HDL/KFTVGA"]
+	path = HDL/KFTVGA
+	url = git@github.com:kitune-san/KFTVGA.git
