@@ -10,3 +10,6 @@
 [submodule "HDL/KF8288"]
 	path = HDL/KF8288
 	url = https://github.com/kitune-san/KF8288
+[submodule "HDL/KFPS2KB"]
+	path = HDL/KFPS2KB
+	url = git@github.com:kitune-san/KFPS2KB.git
