@@ -56,9 +56,6 @@ module CHIPSET #(
 
     always_comb begin
         if (address_enable_n & ~address[9] & ~address[8]) begin
-            chip_select_n = 8'b11111111;
-        end
-        else begin
             casez (address[7:5])
                 3'b000:  chip_select_n = 8'b11111110;
                 3'b001:  chip_select_n = 8'b11111101;
@@ -71,11 +68,15 @@ module CHIPSET #(
                 default: chip_select_n = 8'b11111111;
             endcase
         end
+        else begin
+            chip_select_n = 8'b11111111;
+        end
     end
 
     wire    interrupt_chip_select_n = chip_select_n[1];
     wire    timer_chip_select_n     = chip_select_n[2];
     wire    ppi_chip_select_n       = chip_select_n[3];
+
     wire    tvga_chip_select_n      = ~(enable_tvga & (address[19:14] == 6'b1011_10));
 
     //
@@ -208,8 +209,8 @@ module CHIPSET #(
         .clock                      (clock),
         .reset                      (reset),
         .chip_select_n              (tvga_chip_select_n),
-        .read_enable_n              (io_read_command_n),
-        .write_enable_n             (advanced_io_write_command_n),
+        .read_enable_n              (memory_read_command_n),
+        .write_enable_n             (advanced_memory_write_command_n),
         .address                    (address[13:0]),
         .data_bus_in                (data_bus_in),
         .data_bus_out               (tvga_data_bus_out),
