@@ -1,8 +1,8 @@
 //
-// KFPC-XT chipset
+// KFPC-XT Peripherals
 // Written by kitune-san
 //
-module CHIPSET #(
+module PERIPHERALS #(
     parameter ps2_over_time = 16'd1000
 ) (
     // Bus
