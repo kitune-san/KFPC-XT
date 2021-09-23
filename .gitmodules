@@ -16,3 +16,6 @@
 [submodule "HDL/KFTVGA"]
 	path = HDL/KFTVGA
 	url = git@github.com:kitune-san/KFTVGA.git
+[submodule "HDL/KF8237"]
+	path = HDL/KF8237
+	url = git@github.com:kitune-san/KF8237.git
