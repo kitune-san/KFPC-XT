@@ -8,15 +8,13 @@ module PERIPHERALS #(
     // Bus
     input   logic           clock,
     input   logic           reset,
-    input   logic           advanced_io_write_command_n,
-    input   logic           io_write_command_n,
-    input   logic           io_read_command_n,
-    input   logic           advanced_memory_write_command_n,
-    input   logic           memory_write_command_n,
-    input   logic           memory_read_command_n,
+    input   logic           io_write_n,
+    input   logic           io_read_n,
+    input   logic           memory_write_n,
+    input   logic           memory_read_n,
     input   logic           address_enable_n,
     input   logic   [19:0]  address,
-    input   logic   [7:0]   data_bus_in,
+    input   logic   [7:0]   internal_data_bus,
     output  logic   [7:0]   data_bus_out,
     output  logic           data_bus_out_from_chipset,
     input   logic           interrupt_acknowledge_n,
@@ -91,10 +89,10 @@ module PERIPHERALS #(
         .clock                      (clock),
         .reset                      (reset),
         .chip_select_n              (interrupt_chip_select_n),
-        .read_enable_n              (io_read_command_n),
-        .write_enable_n             (advanced_io_write_command_n),
+        .read_enable_n              (io_read_n),
+        .write_enable_n             (io_write_n),
         .address                    (address[0]),
-        .data_bus_in                (data_bus_in),
+        .data_bus_in                (internal_data_bus),
         .data_bus_out               (interrupt_data_bus_out),
 
         // I/O
@@ -131,10 +129,10 @@ module PERIPHERALS #(
         .clock                      (clock),
         .reset                      (reset),
         .chip_select_n              (timer_chip_select_n),
-        .read_enable_n              (io_read_command_n),
-        .write_enable_n             (advanced_io_write_command_n),
+        .read_enable_n              (io_read_n),
+        .write_enable_n             (io_write_n),
         .address                    (address[1:0]),
-        .data_bus_in                (data_bus_in),
+        .data_bus_in                (internal_data_bus),
         .data_bus_out               (timer_data_bus_out),
 
         // I/O
@@ -163,10 +161,10 @@ module PERIPHERALS #(
         .clock                      (clock),
         .reset                      (reset),
         .chip_select_n              (ppi_chip_select_n),
-        .read_enable_n              (io_read_command_n),
-        .write_enable_n             (advanced_io_write_command_n),
+        .read_enable_n              (io_read_n),
+        .write_enable_n             (io_write_n),
         .address                    (address[1:0]),
-        .data_bus_in                (data_bus_in),
+        .data_bus_in                (internal_data_bus),
         .data_bus_out               (ppi_data_bus_out),
 
         // I/O
@@ -209,10 +207,10 @@ module PERIPHERALS #(
         .clock                      (clock),
         .reset                      (reset),
         .chip_select_n              (tvga_chip_select_n),
-        .read_enable_n              (memory_read_command_n),
-        .write_enable_n             (advanced_memory_write_command_n),
+        .read_enable_n              (memory_read_n),
+        .write_enable_n             (memory_write_n),
         .address                    (address[13:0]),
-        .data_bus_in                (data_bus_in),
+        .data_bus_in                (internal_data_bus),
         .data_bus_out               (tvga_data_bus_out),
 
         // I/O
@@ -229,19 +227,19 @@ module PERIPHERALS #(
     // data_bus_out
     //
     always_comb begin
-        if (~interrupt_chip_select_n) begin
+        if ((~interrupt_chip_select_n) && (~io_read_n)) begin
             data_bus_out_from_chipset = 1'b1;
             data_bus_out = interrupt_data_bus_out;
         end
-        else if (~timer_chip_select_n) begin
+        else if ((~timer_chip_select_n) && (~io_read_n)) begin
             data_bus_out_from_chipset = 1'b1;
             data_bus_out = timer_data_bus_out;
         end
-        else if (~ppi_chip_select_n) begin
+        else if ((~ppi_chip_select_n) && (~io_read_n)) begin
             data_bus_out_from_chipset = 1'b1;
             data_bus_out = ppi_data_bus_out;
         end
-        else if (~tvga_chip_select_n) begin
+        else if ((~tvga_chip_select_n) && (~memory_read_n)) begin
             data_bus_out_from_chipset = 1'b1;
             data_bus_out = tvga_data_bus_out;
         end
