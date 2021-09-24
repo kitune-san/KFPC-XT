@@ -19,6 +19,8 @@ module PERIPHERALS #(
     output  logic           data_bus_out_from_chipset,
     input   logic           interrupt_acknowledge_n,
     output  logic           interrupt_to_cpu,
+    output  logic           dma_chip_select_n,
+    output  logic           dma_page_chip_select_n,
 
     // I/O
     input   logic   [7:0]   interrupt_request,
@@ -71,9 +73,11 @@ module PERIPHERALS #(
         end
     end
 
+    assign  dma_chip_select_n       = chip_select_n[0];
     wire    interrupt_chip_select_n = chip_select_n[1];
     wire    timer_chip_select_n     = chip_select_n[2];
     wire    ppi_chip_select_n       = chip_select_n[3];
+    assign  dma_page_chip_select_n  = chip_select_n[4];
 
     wire    tvga_chip_select_n      = ~(enable_tvga & (address[19:14] == 6'b1011_10));
 
