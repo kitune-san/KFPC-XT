@@ -55,7 +55,7 @@ module PERIPHERALS #(
     logic   [7:0]   chip_select_n;
 
     always_comb begin
-        if (address_enable_n & ~address[9] & ~address[8]) begin
+        if (~address_enable_n & ~address[9] & ~address[8]) begin
             casez (address[7:5])
                 3'b000:  chip_select_n = 8'b11111110;
                 3'b001:  chip_select_n = 8'b11111101;
