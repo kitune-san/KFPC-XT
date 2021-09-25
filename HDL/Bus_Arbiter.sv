@@ -10,15 +10,14 @@ module BUS_ARBITER (
     input   logic   [19:0]  cpu_address,
     input   logic   [7:0]   cpu_data_bus,
     input   logic   [2:0]   processor_status,
+    input   logic           processor_lock_n,
 
     // Wait Logic
-    input   logic           address_enable_n,   // AENBRD
-    input   logic           dma_enable_n,
     input   logic           dma_ready,
-    output  logic           hold_request,
-    input   logic           hold_acknowledge,
+    output  logic           dma_wait_n,
 
     // Bus Control
+    output  logic           address_enable_n,   // AENBRD
     output  logic           io_write_n,
     input   logic           io_write_n_ext,
     output  logic           io_write_n_direction,
@@ -46,6 +45,75 @@ module BUS_ARBITER (
     input   logic   [3:0]   dma_request,
     output  logic   [3:0]   dma_acknowledge_n
 );
+
+    //
+    // Hold Acknowledge Signal
+    //
+    logic   hold_request_ff_1;
+    logic   hold_request_ff_2;
+    logic   hold_acknowledge;
+    logic   hold_request;
+
+    // NOTE: POSEDGE
+    always_ff @(posedge clock, posedge reset) begin
+        if (reset)
+            hold_request_ff_1 <= 1'b0;
+        else if (processor_status[0] & processor_status[1] & processor_lock_n & hold_request)
+            hold_request_ff_1 <= 1'b1;
+        else
+            hold_request_ff_1 <= 1'b0;
+    end
+
+    // NOTE: NEGEDGE
+    always_ff @(negedge clock, posedge reset) begin
+        if (reset)
+            hold_request_ff_2 <= 1'b0;
+        else if (~hold_request)
+            hold_request_ff_2 <= 1'b0;
+        else if (hold_request_ff_2)
+            hold_request_ff_2 <= 1'b1;
+        else
+            hold_request_ff_2 <= hold_request_ff_1;
+    end
+
+    assign  hold_acknowledge = (hold_request) ? hold_request_ff_2 : 1'b0;
+
+
+    //
+    // Address/Command Enable Signal
+    //
+    // NOTE: POSEDGE
+    always_ff @(posedge clock, posedge reset) begin
+        if (reset)
+            address_enable_n <= 1'b0;
+        else
+            address_enable_n <= hold_acknowledge;
+    end
+
+    assign  command_enable = ~address_enable_n;
+
+
+    //
+    // DMA Wait Signal
+    //
+    logic   dma_wait;
+
+    // NOTE: POSEDGE
+    always_ff @(posedge clock, posedge reset) begin
+        if (reset)
+            dma_wait <= 1'b0;
+        else
+            dma_wait <= address_enable_n;
+    end
+
+    assign dma_wait_n = ~dma_wait;
+
+
+    //
+    // DMA Enable Signal
+    //
+    wire    dma_enable_n = ~(dma_wait & address_enable_n);
+
 
     //
     // 8288 Bus Controller
