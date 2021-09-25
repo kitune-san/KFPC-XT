@@ -260,7 +260,11 @@ module BUS_ARBITER (
     // Data Bus
     //
     always_comb begin
-        if ((data_enable) && (direction_transmit_or_receive_n)) begin
+        if (~interrupt_acknowledge_n) begin
+            internal_data_bus  = data_bus_ext;
+            data_bus_direction = 1'b0;
+        end
+        else if ((data_enable) && (direction_transmit_or_receive_n)) begin
             internal_data_bus  = cpu_data_bus;
             data_bus_direction = 1'b0;
         end

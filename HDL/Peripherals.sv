@@ -231,7 +231,11 @@ module PERIPHERALS #(
     // data_bus_out
     //
     always_comb begin
-        if ((~interrupt_chip_select_n) && (~io_read_n)) begin
+        if (~interrupt_acknowledge_n) begin
+            data_bus_out_from_chipset = 1'b1;
+            data_bus_out = interrupt_data_bus_out;
+        end
+        else if ((~interrupt_chip_select_n) && (~io_read_n)) begin
             data_bus_out_from_chipset = 1'b1;
             data_bus_out = interrupt_data_bus_out;
         end
