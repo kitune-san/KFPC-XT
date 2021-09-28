@@ -5,23 +5,18 @@
 module READY (
     input   logic           clock,
     input   logic           reset,
-
-    // CPU Bus
+    // CPU
     output  logic           processor_ready,
- 
-    // Wait Logic
+    // Bus Arbiter
     output  logic           dma_ready,
     input   logic           dma_wait_n,
-
-    // Bus Control
-    input   logic           address_enable_n,   // AENBRD
-    input   logic           io_write_n,
-    input   logic           io_read_n,
-    input   logic           memory_read_n,
-
     // I/O
+    input   logic           io_channel_ready,
+    input   logic           io_read_n,
+    input   logic           io_write_n,
+    input   logic           memory_read_n,
     input   logic           dma0_acknowledge_n,
-    input   logic           io_channel_ready
+    input   logic           address_enable_n
 );
 
     //

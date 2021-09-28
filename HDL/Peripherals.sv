@@ -5,29 +5,28 @@
 module PERIPHERALS #(
     parameter ps2_over_time = 16'd1000
 ) (
-    // Bus
     input   logic           clock,
     input   logic           reset,
-    input   logic           io_write_n,
-    input   logic           io_read_n,
-    input   logic           memory_write_n,
-    input   logic           memory_read_n,
-    input   logic           address_enable_n,
+    // CPU
+    output  logic           interrupt_to_cpu,
+    // Bus Arbiter
+    input   logic           interrupt_acknowledge_n,
+    output  logic           dma_chip_select_n,
+    output  logic           dma_page_chip_select_n,
+    // I/O Ports
     input   logic   [19:0]  address,
     input   logic   [7:0]   internal_data_bus,
     output  logic   [7:0]   data_bus_out,
     output  logic           data_bus_out_from_chipset,
-    input   logic           interrupt_acknowledge_n,
-    output  logic           interrupt_to_cpu,
-    output  logic           dma_chip_select_n,
-    output  logic           dma_page_chip_select_n,
-
-    // I/O
     input   logic   [7:0]   interrupt_request,
-
+    input   logic           io_read_n,
+    input   logic           io_write_n,
+    input   logic           memory_read_n,
+    input   logic           memory_write_n,
+    input   logic           address_enable_n,
+    // Peripherals
     output  logic   [2:0]   timer_counter_out,
     output  logic           speaker_out,
-
     output  logic   [7:0]   port_a_out,
     output  logic           port_a_io,
     input   logic   [7:0]   port_b_in,
@@ -36,10 +35,8 @@ module PERIPHERALS #(
     input   logic   [7:0]   port_c_in,
     output  logic   [7:0]   port_c_out,
     output  logic   [7:0]   port_c_io,
-
     input   logic           ps2_clock,
     input   logic           ps2_data,
-
     input   logic           enable_tvga,
     input   logic           video_clock,    // 25MHz
     input   logic           video_reset,

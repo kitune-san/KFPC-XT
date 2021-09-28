@@ -5,46 +5,43 @@
 module BUS_ARBITER (
     input   logic           clock,
     input   logic           reset,
-
-    // CPU Bus
+    // CPU
     input   logic   [19:0]  cpu_address,
     input   logic   [7:0]   cpu_data_bus,
     input   logic   [2:0]   processor_status,
     input   logic           processor_lock_n,
-
-    // Wait Logic
+    output  logic           processor_transmit_or_receive_n,
+    // Ready Logic
     input   logic           dma_ready,
     output  logic           dma_wait_n,
-
-    // Bus Control
-    output  logic           address_enable_n,   // AENBRD
-    output  logic           io_write_n,
-    input   logic           io_write_n_ext,
-    output  logic           io_write_n_direction,
-    output  logic           io_read_n,
-    input   logic           io_read_n_ext,
-    output  logic           io_read_n_direction,
-    output  logic           memory_write_n,
-    input   logic           memory_write_n_ext,
-    output  logic           memory_write_n_direction,
-    output  logic           memory_read_n,
-    input   logic           memory_read_n_ext,
-    output  logic           memory_read_n_direction,
-    output  logic   [19:0]  address,
-    input   logic   [19:0]  address_ext,
-    output  logic           address_direction,
-    output  logic           address_latch_enable,
-    input   logic   [7:0]   data_bus_ext,
-    output  logic   [7:0]   internal_data_bus,
-    output  logic           data_bus_direction,
+    // Peripherals
     output  logic           interrupt_acknowledge_n,
     input   logic           dma_chip_select_n,
     input   logic           dma_page_chip_select_n,
-
     // I/O
-    output  logic           terminal_count_n,
+    output  logic   [19:0]  address,
+    input   logic   [19:0]  address_ext,
+    output  logic           address_direction,
+    input   logic   [7:0]   data_bus_ext,
+    output  logic   [7:0]   internal_data_bus,
+    output  logic           data_bus_direction,
+    output  logic           address_latch_enable,
+    output  logic           io_read_n,
+    input   logic           io_read_n_ext,
+    output  logic           io_read_n_direction,
+    output  logic           io_write_n,
+    input   logic           io_write_n_ext,
+    output  logic           io_write_n_direction,
+    output  logic           memory_read_n,
+    input   logic           memory_read_n_ext,
+    output  logic           memory_read_n_direction,
+    output  logic           memory_write_n,
+    input   logic           memory_write_n_ext,
+    output  logic           memory_write_n_direction,
     input   logic   [3:0]   dma_request,
-    output  logic   [3:0]   dma_acknowledge_n
+    output  logic   [3:0]   dma_acknowledge_n,
+    output  logic           address_enable_n,
+    output  logic           terminal_count_n
 );
 
     //
@@ -150,6 +147,8 @@ module BUS_ARBITER (
         //.peripheral_data_enable_n           (),
         .address_latch_enable               (address_latch_enable)
     );
+
+    assign  processor_transmit_or_receive_n = direction_transmit_or_receive_n;
 
 
     //
