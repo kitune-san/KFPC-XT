@@ -33,6 +33,7 @@ module BUS_ARBITER (
     output  logic   [19:0]  address,
     input   logic   [19:0]  address_ext,
     output  logic           address_direction,
+    output  logic           address_latch_enable,
     input   logic   [7:0]   data_bus_ext,
     output  logic   [7:0]   internal_data_bus,
     output  logic           data_bus_direction,
@@ -147,7 +148,7 @@ module BUS_ARBITER (
         .data_enable                        (data_enable)
         //.master_cascade_enable              (),
         //.peripheral_data_enable_n           (),
-        //.address_latch_enable               ()
+        .address_latch_enable               (address_latch_enable)
     );
 
 
