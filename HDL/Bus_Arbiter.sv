@@ -145,7 +145,7 @@ module BUS_ARBITER (
         //.memory_write_command_n             (),
         .memory_read_command_n              (bc_memory_read_n),
         .direction_transmit_or_receive_n    (direction_transmit_or_receive_n),
-        .data_enable                        (data_enable)
+        .data_enable                        (data_enable),
         //.master_cascade_enable              (),
         //.peripheral_data_enable_n           (),
         .address_latch_enable               (address_latch_enable)
