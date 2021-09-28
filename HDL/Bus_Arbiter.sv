@@ -42,7 +42,7 @@ module BUS_ARBITER (
     input   logic           dma_page_chip_select_n,
 
     // I/O
-    output  logic           terminal_count,
+    output  logic           terminal_count_n,
     input   logic   [3:0]   dma_request,
     output  logic   [3:0]   dma_acknowledge_n
 );
@@ -158,6 +158,7 @@ module BUS_ARBITER (
     logic           dma_io_write_n;
     logic   [7:0]   dma_data_out;
     logic           dma_io_read_n;
+    logic           terminal_count;
     logic   [15:0]  dma_address_out;
     logic           dma_memory_read_n;
     logic           dma_memory_write_n;
@@ -189,6 +190,8 @@ module BUS_ARBITER (
         .memory_read_n                      (dma_memory_read_n),
         .memory_write_n                     (dma_memory_write_n)
     );
+
+    assign  terminal_count_n = ~terminal_count;
 
 
     //
