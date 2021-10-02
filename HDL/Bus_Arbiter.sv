@@ -88,8 +88,6 @@ module BUS_ARBITER (
             address_enable_n <= hold_acknowledge;
     end
 
-    assign  command_enable = ~address_enable_n;
-
 
     //
     // DMA Wait Signal
