@@ -271,7 +271,7 @@ module BUS_ARBITER (
             internal_data_bus  = cpu_data_bus;
             data_bus_direction = 1'b0;
         end
-        else if ((~dma_chip_select_n) && (io_read_n)) begin
+        else if ((~dma_chip_select_n) && (~io_read_n)) begin
             internal_data_bus  = dma_data_out;
             data_bus_direction = 1'b0;
         end
