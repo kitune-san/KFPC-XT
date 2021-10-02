@@ -161,7 +161,7 @@ module CHIPSET (
         .video_v_sync                       (video_v_sync),
         .video_r                            (video_r),
         .video_g                            (video_g),
-        .video_b                            (video_b),
+        .video_b                            (video_b)
     );
 
     assign  data_bus = internal_data_bus;
