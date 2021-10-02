@@ -205,7 +205,7 @@ module BUS_ARBITER (
         always_ff @(negedge clock, posedge reset) begin
             if (reset)
                 dma_page_register[dma_page_i] <= 0;
-            else if ((~dma_page_chip_select_n) && (io_write_n) && (bit_select[dma_page_i] == address[1:0]))
+            else if ((~dma_page_chip_select_n) && (~io_write_n) && (bit_select[dma_page_i] == address[1:0]))
                 dma_page_register[dma_page_i] <= internal_data_bus[3:0];
             else
                 dma_page_register[dma_page_i] <= dma_page_register[dma_page_i];
