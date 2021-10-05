@@ -1,6 +1,7 @@
 
-`define TB_CYCLE        40
-`define TB_FINISH_COUNT 20000
+`define TB_CYCLE        200
+`define TB_SDRAM_CYCLE  20
+`define TB_FINISH_COUNT 200000
 
 module CHIPSET_tm();
 
@@ -22,10 +23,14 @@ module CHIPSET_tm();
     //
     logic   clock;
     logic   video_clock;
+    logic   sdram_clock;
     initial clock = 1'b0;
+    initial sdram_clock = 1'b0;
     always #(`TB_CYCLE / 2) clock = ~clock;
 
     assign video_clock = clock;
+
+    always #(`TB_SDRAM_CYCLE/ 2) sdram_clock = ~sdram_clock;
 
     //
     // Generate reset
@@ -119,8 +124,23 @@ module CHIPSET_tm();
     logic   [3:0]   video_r;
     logic   [3:0]   video_g;
     logic   [3:0]   video_b;
+    logic           enable_sdram;
+    logic   [12:0]  sdram_address;
+    logic           sdram_cke;
+    logic           sdram_cs;
+    logic           sdram_ras;
+    logic           sdram_cas;
+    logic           sdram_we;
+    logic   [1:0]   sdram_ba;
+    logic   [15:0]  sdram_dq_in;
+    logic   [15:0]  sdram_dq_out;
+    logic           sdram_dq_io;
+    logic           sdram_ldqm;
+    logic           sdram_udqm;
 
     CHIPSET u_CHIPSET (.*);
+
+    defparam u_CHIPSET.u_RAM.u_KFSDRAM.sdram_init_wait = 16'd10;
 
     //
     // Task : Initialization
@@ -153,6 +173,8 @@ module CHIPSET_tm();
         ps2_data            = 1'b1;
         enable_tvga         = 1'b1;
         video_reset         = 1'b1;
+        enable_sdram        = 1'b1;
+        sdram_dq_in         = 16'hAAAA;
         #(`TB_CYCLE * 12);
     end
     endtask

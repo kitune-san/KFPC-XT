@@ -60,7 +60,22 @@ module CHIPSET (
     output  logic           video_v_sync,
     output  logic   [3:0]   video_r,
     output  logic   [3:0]   video_g,
-    output  logic   [3:0]   video_b
+    output  logic   [3:0]   video_b,
+    // SDRAM
+    input   logic           enable_sdram,
+    input   logic           sdram_clock,    // 50MHz
+    output  logic   [12:0]  sdram_address,
+    output  logic           sdram_cke,
+    output  logic           sdram_cs,
+    output  logic           sdram_ras,
+    output  logic           sdram_cas,
+    output  logic           sdram_we,
+    output  logic   [1:0]   sdram_ba,
+    input   logic   [15:0]  sdram_dq_in,
+    output  logic   [15:0]  sdram_dq_out,
+    output  logic           sdram_dq_io,
+    output  logic           sdram_ldqm,
+    output  logic           sdram_udqm
 );
 
     logic           dma_ready;
@@ -68,9 +83,12 @@ module CHIPSET (
     logic           interrupt_acknowledge_n;
     logic           dma_chip_select_n;
     logic           dma_page_chip_select_n;
+    logic           memory_access_ready;
+    logic           ram_address_select_n;
     logic   [7:0]   internal_data_bus;
     logic   [7:0]   internal_data_bus_ext;
     logic   [7:0]   internal_data_bus_chipset;
+    logic   [7:0]   internal_data_bus_ram;
     logic           data_bus_out_from_chipset;
 
     READY u_READY (
@@ -79,7 +97,7 @@ module CHIPSET (
         .processor_ready                    (processor_ready),
         .dma_ready                          (dma_ready),
         .dma_wait_n                         (dma_wait_n),
-        .io_channel_ready                   (io_channel_ready),
+        .io_channel_ready                   (io_channel_ready & memory_access_ready),
         .io_read_n                          (io_read_n),
         .io_write_n                         (io_write_n),
         .memory_read_n                      (memory_read_n),
@@ -164,11 +182,39 @@ module CHIPSET (
         .video_b                            (video_b)
     );
 
+    RAM u_RAM (
+        .clock                              (clock),
+        .sdram_clock                        (sdram_clock),
+        .reset                              (reset),
+        .enable_sdram                       (enable_sdram),
+        .address                            (address),
+        .internal_data_bus                  (internal_data_bus),
+        .data_bus_out                       (internal_data_bus_ram),
+        .memory_read_n                      (memory_read_n),
+        .memory_write_n                     (memory_write_n),
+        .memory_access_ready                (memory_access_ready),
+        .ram_address_select_n               (ram_address_select_n),
+        .sdram_address                      (sdram_address),
+        .sdram_cke                          (sdram_cke),
+        .sdram_cs                           (sdram_cs),
+        .sdram_ras                          (sdram_ras),
+        .sdram_cas                          (sdram_cas),
+        .sdram_we                           (sdram_we),
+        .sdram_ba                           (sdram_ba),
+        .sdram_dq_in                        (sdram_dq_in),
+        .sdram_dq_out                       (sdram_dq_out),
+        .sdram_dq_io                        (sdram_dq_io),
+        .sdram_ldqm                         (sdram_ldqm),
+        .sdram_udqm                         (sdram_udqm)
+    );
+
     assign  data_bus = internal_data_bus;
 
     always_comb begin
         if (data_bus_out_from_chipset)
             internal_data_bus_ext = internal_data_bus_chipset;
+        else if ((~ram_address_select_n) && (~memory_read_n))
+            internal_data_bus_ext = internal_data_bus_ram;
         else
             if (data_bus_direction == 1'b1)
                 internal_data_bus_ext = data_bus_ext;
