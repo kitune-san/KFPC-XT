@@ -19,3 +19,6 @@
 [submodule "HDL/KF8237"]
 	path = HDL/KF8237
 	url = git@github.com:kitune-san/KF8237.git
+[submodule "HDL/KFSDRAM"]
+	path = HDL/KFSDRAM
+	url = git@github.com:kitune-san/KFSDRAM.git
