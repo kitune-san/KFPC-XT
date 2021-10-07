@@ -90,6 +90,7 @@ module CHIPSET (
     logic   [7:0]   internal_data_bus_chipset;
     logic   [7:0]   internal_data_bus_ram;
     logic           data_bus_out_from_chipset;
+    logic           internal_data_bus_direction;
 
     READY u_READY (
         .clock                              (clock),
@@ -123,7 +124,7 @@ module CHIPSET (
         .address_direction                  (address_direction),
         .data_bus_ext                       (internal_data_bus_ext),
         .internal_data_bus                  (internal_data_bus),
-        .data_bus_direction                 (data_bus_direction),
+        .data_bus_direction                 (internal_data_bus_direction),
         .address_latch_enable               (address_latch_enable),
         .io_read_n                          (io_read_n),
         .io_read_n_ext                      (io_read_n_ext),
@@ -211,15 +212,24 @@ module CHIPSET (
     assign  data_bus = internal_data_bus;
 
     always_comb begin
-        if (data_bus_out_from_chipset)
+        if (data_bus_out_from_chipset) begin
             internal_data_bus_ext = internal_data_bus_chipset;
-        else if ((~ram_address_select_n) && (~memory_read_n))
+            data_bus_direction    = 1'b0;
+        end
+        else if ((~ram_address_select_n) && (~memory_read_n)) begin
             internal_data_bus_ext = internal_data_bus_ram;
-        else
-            if (data_bus_direction == 1'b1)
+            data_bus_direction    = 1'b0;
+        end
+        else begin
+            if (internal_data_bus_direction == 1'b1) begin
                 internal_data_bus_ext = data_bus_ext;
-            else
+                data_bus_direction    = 1'b1;
+            end
+            else begin
                 internal_data_bus_ext = 0;
+                data_bus_direction    = 1'b0;
+            end
+        end
     end
 
 endmodule
