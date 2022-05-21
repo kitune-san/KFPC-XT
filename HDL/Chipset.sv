@@ -4,6 +4,7 @@
 //
 module CHIPSET (
     input   logic           clock,
+    input   logic           peripheral_clock,
     input   logic           reset,
     // CPU
     input   logic   [19:0]  cpu_address,
@@ -146,6 +147,7 @@ module CHIPSET (
 
     PERIPHERALS u_PERIPHERALS (
         .clock                              (clock),
+        .peripheral_clock                   (peripheral_clock),
         .reset                              (reset),
         .interrupt_to_cpu                   (interrupt_to_cpu),
         .interrupt_acknowledge_n            (interrupt_acknowledge_n),

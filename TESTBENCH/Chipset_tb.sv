@@ -22,11 +22,14 @@ module CHIPSET_tm();
     // Generate clock
     //
     logic   clock;
+    logic   peripheral_clock;
     logic   video_clock;
     logic   sdram_clock;
     initial clock = 1'b0;
+    initial peripheral_clock = 1'b0;
     initial sdram_clock = 1'b0;
     always #(`TB_CYCLE / 2) clock = ~clock;
+    always #(`TB_CYCLE / 1) peripheral_clock = ~peripheral_clock;
 
     assign video_clock = clock;
 

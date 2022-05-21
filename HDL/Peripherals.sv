@@ -6,6 +6,7 @@ module PERIPHERALS #(
     parameter ps2_over_time = 16'd1000
 ) (
     input   logic           clock,
+    input   logic           peripheral_clock,
     input   logic           reset,
     // CPU
     output  logic           interrupt_to_cpu,
@@ -113,7 +114,7 @@ module PERIPHERALS #(
     // 8253
     //
     logic   timer_clock;
-    always_ff @(negedge clock, posedge reset) begin
+    always_ff @(negedge peripheral_clock, posedge reset) begin
         if (reset)
             timer_clock <= 1'b0;
         else
@@ -185,7 +186,7 @@ module PERIPHERALS #(
     //
     KFPS2KB u_KFPS2KB (
         // Bus
-        .clock                      (clock),
+        .clock                      (peripheral_clock),
         .reset                      (reset),
 
         // PS/2 I/O
