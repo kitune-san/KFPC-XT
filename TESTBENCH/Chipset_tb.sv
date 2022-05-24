@@ -362,7 +362,7 @@ module CHIPSET_tm();
         #(`TB_CYCLE * 3);
         ps2_clock  = 1'b1;
         ps2_data   = 1'b1;
-        #(`TB_CYCLE * 1);
+        #(`TB_CYCLE * 4);
     end
     endtask
 
