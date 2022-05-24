@@ -113,12 +113,27 @@ module PERIPHERALS #(
     //
     // 8253
     //
-    logic   timer_clock;
+
+    // Clock domain crossing
+    logic   timer_clock_ff_1;
     always_ff @(negedge peripheral_clock, posedge reset) begin
         if (reset)
-            timer_clock <= 1'b0;
+            timer_clock_ff_1 <= 1'b0;
         else
-            timer_clock <= ~timer_clock;
+            timer_clock_ff_1 <= ~timer_clock_ff_1;
+    end
+
+    logic   timer_clock_ff_2;
+    logic   timer_clock;
+    always_ff @(negedge clock, posedge reset) begin
+        if (reset) begin
+            timer_clock_ff_2    <= 1'b0;
+            timer_clock         <= 1'b0;
+        end
+        else begin
+            timer_clock_ff_2    <= timer_clock_ff_1;
+            timer_clock         <= timer_clock_ff_2;
+        end
     end
 
     logic   [7:0]   timer_data_bus_out;
@@ -184,6 +199,24 @@ module PERIPHERALS #(
     //
     // KFPS2KB
     //
+
+    // Clock domain crossing
+    logic   clear_keycode_ff;
+    logic   clear_keycode;
+    always_ff @(negedge peripheral_clock, posedge reset) begin
+        if (reset) begin
+            clear_keycode_ff    <= 1'b0;
+            clear_keycode       <= 1'b0;
+        end
+        else begin
+            clear_keycode_ff    <= port_b_out[7];
+            clear_keycode       <= clear_keycode_ff;
+        end
+    end
+
+    logic           keybord_irq;
+    logic   [7:0]   keycode;
+
     KFPS2KB u_KFPS2KB (
         // Bus
         .clock                      (peripheral_clock),
@@ -194,10 +227,36 @@ module PERIPHERALS #(
         .device_data                (ps2_data),
 
         // I/O
-        .irq                        (keybord_interrupt),
-        .keycode                    (port_a_in),
-        .clear_keycode              (port_b_out[7])
+        .irq                        (keybord_irq),
+        .keycode                    (keycode),
+        .clear_keycode              (clear_keycode)
     );
+
+    // Clock domain crossing
+    logic   keybord_interrupt_ff;
+    always_ff @(negedge clock, posedge reset) begin
+        if (reset) begin
+            keybord_interrupt_ff    <= 1'b0;
+            keybord_interrupt       <= 1'b0;
+        end
+        else begin
+            keybord_interrupt_ff    <= keybord_irq;
+            keybord_interrupt       <= keybord_interrupt_ff;
+        end
+    end
+
+    logic   [7:0]   keycode_ff;
+    always_ff @(negedge clock, posedge reset) begin
+        if (reset) begin
+            keycode_ff  <= 8'h00;
+            port_a_in   <= 8'h00;
+        end
+        else begin
+            keycode_ff  <= keycode;
+            port_a_in   <= keycode_ff;
+        end
+    end
+
 
     //
     // KFTVGA
