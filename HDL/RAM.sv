@@ -53,35 +53,109 @@ module RAM (
     // Latch I/O Ports
     //
     // Address
+    logic   [19:0]  latch_address_cpu_clk;
     always_ff @(posedge clock, posedge reset) begin
         if (reset)
-            latch_address   <= 0;
+            latch_address_cpu_clk   <= 0;
         else
-            latch_address   <= address;
+            latch_address_cpu_clk   <= address;
+    end
+
+    logic   [19:0]  latch_address_ff;
+    always_ff @(posedge sdram_clock, posedge reset) begin
+        if (reset) begin
+            latch_address_ff    <= 0;
+            latch_address       <= 0;
+        end
+        else begin
+            latch_address_ff    <= latch_address_cpu_clk;
+            latch_address       <= latch_address_ff;
+        end
     end
 
     // Data Bus
+    logic   [7:0]   latch_data_cpu_clk;
     always_ff @(posedge clock, posedge reset) begin
         if (reset)
-            latch_data      <= 0;
+            latch_data_cpu_clk  <= 0;
         else
-            latch_data      <= internal_data_bus;
+            latch_data_cpu_clk  <= internal_data_bus;
+    end
+
+    logic   [7:0]   latch_data_ff;
+    always_ff @(posedge sdram_clock, posedge reset) begin
+        if (reset) begin
+            latch_data_ff   <= 0;
+            latch_data      <= 0;
+        end
+        else begin
+            latch_data_ff   <= latch_data_cpu_clk;
+            latch_data      <= latch_data_ff;
+        end
     end
 
     // Write Command
+    logic   write_command_cpu_clk;
+    logic   write_command_cpu_clk_delay;
     always_ff @(posedge clock, posedge reset) begin
-        if (reset)
-            write_command   <= 1'b0;
-        else
-            write_command   <= ~ram_address_select_n & ~memory_write_n;
+        if (reset) begin
+            write_command_cpu_clk       <= 1'b0;
+            write_command_cpu_clk_delay <= 1'b0;
+        end
+        else begin
+            if (~ram_address_select_n & ~memory_write_n) begin
+                write_command_cpu_clk       <= 1'b1;
+                write_command_cpu_clk_delay <= write_command_cpu_clk;
+            end
+            else begin
+                write_command_cpu_clk       <= 1'b0;
+                write_command_cpu_clk_delay <= 1'b0;
+            end
+        end
+    end
+
+    logic   write_command_ff;
+    always_ff @(posedge sdram_clock, posedge reset) begin
+        if (reset) begin
+            write_command_ff    <= 1'b0;
+            write_command       <= 1'b0;
+        end
+        else begin
+            write_command_ff    <= write_command_cpu_clk_delay;
+            write_command       <= write_command_ff;
+        end
     end
 
     // Read Command
+    logic   read_command_cpu_clk;
+    logic   read_command_cpu_clk_delay;
     always_ff @(posedge clock, posedge reset) begin
-        if (reset)
+        if (reset) begin
+            read_command_cpu_clk        <= 1'b0;
+            read_command_cpu_clk_delay  <= 1'b0;
+        end
+        else begin
+            if (~ram_address_select_n & ~memory_read_n) begin
+                read_command_cpu_clk        <= 1'b1;
+                read_command_cpu_clk_delay  <= read_command_cpu_clk;
+            end
+            else begin
+                read_command_cpu_clk        <= 1'b0;
+                read_command_cpu_clk_delay  <= 1'b0;
+            end
+        end
+    end
+
+    logic   read_command_ff;
+    always_ff @(posedge sdram_clock, posedge reset) begin
+        if (reset) begin
+            read_command_ff <= 1'b0;
             read_command    <= 1'b0;
-        else
-            read_command    <= ~ram_address_select_n & ~memory_read_n;
+        end
+        else begin
+            read_command_ff <= read_command_cpu_clk_delay;
+            read_command    <= read_command_ff;
+        end
     end
 
 
