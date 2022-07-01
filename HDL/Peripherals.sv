@@ -249,6 +249,10 @@ module PERIPHERALS #(
             data_bus_out_from_chipset = 1'b1;
             data_bus_out = tvga_data_bus_out;
         end
+        else if ((~io_read_n) && (~address_enable_n)) begin
+            data_bus_out_from_chipset = 1'b1;
+            data_bus_out = 8'hFF;
+		end
         else begin
             data_bus_out_from_chipset = 1'b0;
             data_bus_out = 8'b00000000;
