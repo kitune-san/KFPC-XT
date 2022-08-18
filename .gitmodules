@@ -1,24 +1,24 @@
 [submodule "HDL/KF8253"]
 	path = HDL/KF8253
-	url = git@github.com:kitune-san/KF8253.git
+	url = https://github.com/kitune-san/KF8253.git
 [submodule "HDL/KF8255"]
 	path = HDL/KF8255
-	url = git@github.com:kitune-san/KF8255.git
+	url = https://github.com/kitune-san/KF8255.git
 [submodule "HDL/KF8259"]
 	path = HDL/KF8259
-	url = git@github.com:kitune-san/KF8259.git
+	url = https://github.com/kitune-san/KF8259.git
 [submodule "HDL/KF8288"]
 	path = HDL/KF8288
-	url = https://github.com/kitune-san/KF8288
+	url = https://github.com/kitune-san/KF8288.git
 [submodule "HDL/KFPS2KB"]
 	path = HDL/KFPS2KB
-	url = git@github.com:kitune-san/KFPS2KB.git
+	url = https://github.com/kitune-san/KFPS2KB.git
 [submodule "HDL/KFTVGA"]
 	path = HDL/KFTVGA
-	url = git@github.com:kitune-san/KFTVGA.git
+	url = https://github.com/kitune-san/KFTVGA.git
 [submodule "HDL/KF8237"]
 	path = HDL/KF8237
-	url = git@github.com:kitune-san/KF8237.git
+	url = https://github.com/kitune-san/KF8237.git
 [submodule "HDL/KFSDRAM"]
 	path = HDL/KFSDRAM
-	url = git@github.com:kitune-san/KFSDRAM.git
+	url = https://github.com/kitune-san/KFSDRAM.git
